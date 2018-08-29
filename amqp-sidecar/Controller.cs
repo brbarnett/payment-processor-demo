@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
 
 namespace amqp_sidecar.Controllers
 {
@@ -20,20 +24,27 @@ namespace amqp_sidecar.Controllers
         }
 
         [HttpPost("")]
-        public async Task<ActionResult<string>> CreatePaymentSync([FromBody] SubmitPaymentRequest paymentRequest)
+        public ActionResult<string> EnqueueMessage([FromBody] object messageBody)
         {
+            string exchange = Request.Headers["amqp-exchange"];
+            if(String.IsNullOrEmpty(exchange)) return BadRequest("Could not find required `amqp-exchange` header.");
+
+            string routingKey = Request.Headers["amqp-routing-key"];
+            if(String.IsNullOrEmpty(exchange)) return BadRequest("Could not find required `amqp-routing-key` header.");
+
             // enqueue request as message
             using (var channel = this._brokerConnection.CreateModel())
             {
-                string paymentsExchange = "payments";
-                channel.ExchangeDeclare(exchange: paymentsExchange, type: "topic");
+                channel.ExchangeDeclare(exchange: exchange, type: "topic");
 
-                var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(paymentProcessorRequest));
-                channel.BasicPublish(exchange: paymentsExchange,
-                                     routingKey: "payments.create",
+                var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(messageBody));
+                channel.BasicPublish(exchange: exchange,
+                                     routingKey: routingKey,
                                      basicProperties: null,
                                      body: body);
             }
+
+            return Ok();
         }
     }
 }
