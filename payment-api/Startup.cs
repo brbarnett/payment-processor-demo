@@ -35,9 +35,9 @@ namespace payment_api
             // RabbitMQ connection. Connections are thread safe, models are not
             var factory = new ConnectionFactory
             {
-                HostName = "message-broker",
-                UserName = "rabbitmq",
-                Password = "rabbitmq"
+                HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME"),
+                UserName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME"),
+                Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD")
             };
             services.AddSingleton(factory.CreateConnection());
         }
