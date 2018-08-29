@@ -56,11 +56,11 @@ namespace payment_api
             using (var channel = this._brokerConnection.CreateModel())
             {
                 string paymentsExchange = "payments";
-                channel.ExchangeDeclare(exchange: paymentsExchange, type: "direct");
+                channel.ExchangeDeclare(exchange: paymentsExchange, type: "topic");
 
                 var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(paymentProcessorRequest));
                 channel.BasicPublish(exchange: paymentsExchange,
-                                     routingKey: "submit",
+                                     routingKey: "payments.create",
                                      basicProperties: null,
                                      body: body);
             }
