@@ -13,17 +13,19 @@ namespace payment_api
         [HttpGet("{paymentId}")]
         public ActionResult<string> GetPaymentStatus()
         {
-            return "";
+            throw new NotImplementedException();
         }
 
         [HttpPost("submitSync")]
         public void CreatePaymentSync([FromBody] string payment)
         {
+            throw new NotImplementedException();
         }
 
         [HttpPost("submitAsync")]
         public void CreatePaymentAsync([FromBody] string payment)
         {
+            throw new NotImplementedException();
         }
     }
 }
