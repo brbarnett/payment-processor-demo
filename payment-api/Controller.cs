@@ -37,7 +37,10 @@ namespace payment_api
         public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentSync([FromBody] SubmitPaymentRequest paymentRequest)
         {
             PaymentProcessorSubmitPaymentRequest paymentProcessorRequest = new PaymentProcessorSubmitPaymentRequest(paymentRequest.AccountNumber, paymentRequest.PaymentAmount);
-            var serviceResponse = await this._httpClient.PostAsJsonAsync($"http://payment-processor", paymentProcessorRequest);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "http://payment-processor");
+            var serviceResponse = await this._httpClient.SendAsync(request);
+
             if (!serviceResponse.IsSuccessStatusCode) return new SubmitPaymentResponse(String.Empty, "Error");
 
             PaymentProcessorSubmitPaymentResponse paymentProcessorResponse = await serviceResponse.Content.ReadAsAsync<PaymentProcessorSubmitPaymentResponse>();
@@ -53,6 +56,8 @@ namespace payment_api
             request.Headers.Add("amqp-exchange", "payments");
             request.Headers.Add("amqp-routing-key", "payments.create");
             var serviceResponse = await this._httpClient.SendAsync(request);
+
+            if (!serviceResponse.IsSuccessStatusCode) return new SubmitPaymentResponse(String.Empty, "Error");
 
             return new SubmitPaymentResponse(paymentProcessorRequest.PaymentId, "Pending");
         }
