@@ -30,7 +30,7 @@ namespace payment_processor
         {
             // get payment from cache
             var cache = this._cacheConnection.GetDatabase();
-            RedisValue cachedValue = await cache.StringGetAsync(paymentId);
+            RedisValue cachedValue = await cache.StringGetAsync($"payment.{paymentId}");
 
             if (cachedValue.IsNullOrEmpty) return new GetPaymentStatusResponse(paymentId, "Not found");
 
