@@ -31,14 +31,23 @@ namespace payment_processor
             if (cachedValue.IsNullOrEmpty) return new GetPaymentStatusResponse(paymentId, 0, "Not found");
 
             var payment = JsonConvert.DeserializeObject<Payment>(cachedValue);
-            
+
             return new GetPaymentStatusResponse(payment.Id, payment.Amount, payment.Status);
         }
 
         [HttpPost("")]
-        public void CreatePaymentSync([FromBody] string payment)
+        public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentSync([FromBody] SubmitPaymentRequest paymentRequest)
         {
-            throw new NotImplementedException();
+            Payment payment = new Payment(paymentRequest.AccountNumber, paymentRequest.PaymentAmount);
+
+            // save payment to cache
+            var cache = this._cacheConnection.GetDatabase();
+            await cache.StringSetAsync($"payment.{payment.Id}", JsonConvert.SerializeObject(payment));
+
+            // synchronously wait for external payment gateway
+
+            var response = new SubmitPaymentResponse(payment.Id, payment.AccountNumber, payment.Amount, payment.Status);
+            return response;
         }
 
         [HttpPatch("")]

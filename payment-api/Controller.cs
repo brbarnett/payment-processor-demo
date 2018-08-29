@@ -35,13 +35,23 @@ namespace payment_api
         }
 
         [HttpPost("submitSync")]
-        public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentSync([FromBody] SubmitPaymentRequest payment)
+        public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentSync([FromBody] SubmitPaymentRequest paymentRequest)
         {
-            throw new NotImplementedException();
+            // save to local -- remember that these contracts don't have to match, they just happen to
+            SubmitPaymentRequest request = paymentRequest;
+            var serviceResponse = await this._httpClient.PostAsJsonAsync($"http://payment-processor", request);
+
+            SubmitPaymentResponse response = null;
+            if (serviceResponse.IsSuccessStatusCode)
+            {
+                response = await serviceResponse.Content.ReadAsAsync<SubmitPaymentResponse>();
+            }
+
+            return response;
         }
 
         [HttpPost("submitAsync")]
-        public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentAsync([FromBody] SubmitPaymentRequest payment)
+        public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentAsync([FromBody] SubmitPaymentRequest paymentRequest)
         {
             throw new NotImplementedException();
         }
