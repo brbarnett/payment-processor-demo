@@ -35,6 +35,8 @@ namespace payment_processor
 
             // HttpClient
             services.AddSingleton(new HttpClient());
+
+            services.AddTransient<IPaymentGatewayService, PaymentGatewayService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

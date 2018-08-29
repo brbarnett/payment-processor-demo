@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using payment_processor.Contracts;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using StackExchange.Redis;
 
 namespace payment_processor
 {
@@ -28,6 +33,11 @@ namespace payment_processor
 
         private static void RegisterAsBrokerConsumer()
         {
+            IPaymentGatewayService paymentGatewayService = new PaymentGatewayService(
+                cacheConnection: ConnectionMultiplexer.Connect(Environment.GetEnvironmentVariable("REDIS_CONNECTION")),
+                httpClient: new HttpClient()
+            );
+
             var factory = new ConnectionFactory
             {
                 HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME"),
@@ -53,9 +63,9 @@ namespace payment_processor
             consumer.Received += (model, ea) =>
             {
                 var body = ea.Body;
-                var message = Encoding.UTF8.GetString(body);
+                var submitPaymentRequest = JsonConvert.DeserializeObject<SubmitPaymentRequest>(Encoding.UTF8.GetString(body));
 
-                Console.WriteLine("Received:", message);
+                paymentGatewayService.Process(submitPaymentRequest);
             };
             channel.BasicConsume(queue: createQueue,
                                  autoAck: true,
