@@ -26,6 +26,20 @@ services:
       RABBITMQ_USERNAME: "rabbitmq"
       RABBITMQ_PASSWORD: "rabbitmq"
 
+  payment-api-amqp-sidecar:
+    build:
+      context: .
+      dockerfile: ./amqp-sidecar/Dockerfile
+    container_name: payment-api-amqp-sidecar
+    ports:
+    - "3003:80"
+    depends_on:
+    - message-broker
+    environment:
+      RABBITMQ_HOSTNAME: "message-broker"
+      RABBITMQ_USERNAME: "rabbitmq"
+      RABBITMQ_PASSWORD: "rabbitmq"
+
   payment-processor:
     build:
       context: .
