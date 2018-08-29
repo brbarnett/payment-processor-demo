@@ -19,6 +19,8 @@ services:
     image: payment-api:latest
     ports:
     - "3001:80"
+    depends_on:
+    - message-broker
 
   payment-processor:
     build:

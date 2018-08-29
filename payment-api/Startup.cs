@@ -28,12 +28,17 @@ namespace payment_api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
+
             // HttpClient
             services.AddSingleton(new HttpClient());
 
             // RabbitMQ connection. Connections are thread safe, models are not
-            var factory = new ConnectionFactory();
+            var factory = new ConnectionFactory
+            {
+                HostName = "message-broker",
+                UserName = "rabbitmq",
+                Password = "rabbitmq"
+            };
             services.AddSingleton(factory.CreateConnection());
         }
 
@@ -44,7 +49,7 @@ namespace payment_api
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app.UseMvc();
         }
     }
