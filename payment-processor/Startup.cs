@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using StackExchange.Redis;
 
 namespace payment_processor
 {
@@ -26,6 +27,10 @@ namespace payment_processor
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            // redis cache
+            IConnectionMultiplexer cacheConnection = ConnectionMultiplexer.Connect(Environment.GetEnvironmentVariable("REDIS_CONNECTION"));
+            services.AddSingleton(cacheConnection);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
