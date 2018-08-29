@@ -36,9 +36,9 @@ services:
     depends_on:
     - message-broker
     environment:
-      RABBITMQ_HOSTNAME: "message-broker"
-      RABBITMQ_USERNAME: "rabbitmq"
-      RABBITMQ_PASSWORD: "rabbitmq"
+      RABBITMQ_HOSTNAME: message-broker
+      RABBITMQ_USERNAME: rabbitmq
+      RABBITMQ_PASSWORD: rabbitmq
 
   payment-processor:
     build:
@@ -51,10 +51,10 @@ services:
     depends_on:
     - message-broker
     environment:
-      REDIS_CONNECTION: "payment-processor-db:6379"
-      RABBITMQ_HOSTNAME: "message-broker"
-      RABBITMQ_USERNAME: "rabbitmq"
-      RABBITMQ_PASSWORD: "rabbitmq"
+      REDIS_CONNECTION: payment-processor-db:6379
+      RABBITMQ_HOSTNAME: message-broker
+      RABBITMQ_USERNAME: rabbitmq
+      RABBITMQ_PASSWORD: rabbitmq
       EXTERNAL_PAYMENT_GATEWAY_URI: http://external-payment-gateway
 
   payment-processor-db:
@@ -71,7 +71,7 @@ services:
     - "15672:15672"
     - "5672:5672"
     environment:
-      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
-      RABBITMQ_DEFAULT_USER: "rabbitmq"
-      RABBITMQ_DEFAULT_PASS: "rabbitmq"
-      RABBITMQ_DEFAULT_VHOST: "/"
+      RABBITMQ_ERLANG_COOKIE: SWQOKODSQALRPCLNMEQG
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+      RABBITMQ_DEFAULT_VHOST: /
