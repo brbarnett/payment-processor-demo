@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +42,8 @@ namespace payment_api
         {
             PaymentProcessorSubmitPaymentRequest paymentProcessorRequest = new PaymentProcessorSubmitPaymentRequest(paymentRequest.AccountNumber, paymentRequest.PaymentAmount);
 
-            var request = new HttpRequestMessage(HttpMethod.Post, PpaymentProcessorUri);
+            var request = new HttpRequestMessage(HttpMethod.Post, PaymentProcessorUri);
+            request.Content = new ObjectContent<PaymentProcessorSubmitPaymentRequest>(paymentProcessorRequest, new JsonMediaTypeFormatter());
             var serviceResponse = await this._httpClient.SendAsync(request);
 
             if (!serviceResponse.IsSuccessStatusCode) return new SubmitPaymentResponse(String.Empty, "Error");
@@ -58,6 +60,7 @@ namespace payment_api
             var request = new HttpRequestMessage(HttpMethod.Post, AmqpSidecarUri);
             request.Headers.Add("amqp-exchange", "payments");
             request.Headers.Add("amqp-routing-key", "payments.create");
+            request.Content = new ObjectContent<PaymentProcessorSubmitPaymentRequest>(paymentProcessorRequest, new JsonMediaTypeFormatter());
             var serviceResponse = await this._httpClient.SendAsync(request);
 
             if (!serviceResponse.IsSuccessStatusCode) return new SubmitPaymentResponse(String.Empty, "Error");
