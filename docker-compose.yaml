@@ -20,11 +20,7 @@ services:
     ports:
     - "3001:80"
     depends_on:
-    - message-broker
-    environment:
-      RABBITMQ_HOSTNAME: "message-broker"
-      RABBITMQ_USERNAME: "rabbitmq"
-      RABBITMQ_PASSWORD: "rabbitmq"
+    - payment-api-amqp-sidecar
 
   payment-api-amqp-sidecar:
     build:
