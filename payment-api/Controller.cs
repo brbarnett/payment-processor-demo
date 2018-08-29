@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using payment_api.Contracts;
+using payment_api.Contracts.External;
 
 namespace payment_api
 {
@@ -24,30 +25,21 @@ namespace payment_api
         public async Task<ActionResult<GetPaymentStatusResponse>> GetPaymentStatus(string paymentId)
         {
             var serviceResponse = await this._httpClient.GetAsync($"http://payment-processor/{paymentId}");
+            if (!serviceResponse.IsSuccessStatusCode) return new GetPaymentStatusResponse(String.Empty, "Not found");
 
-            GetPaymentStatusResponse response = null;
-            if (serviceResponse.IsSuccessStatusCode)
-            {
-                response = await serviceResponse.Content.ReadAsAsync<GetPaymentStatusResponse>();
-            }
-
-            return response;
+            PaymentProcessorGetPaymentStatusResponse paymentProcessorResponse = await serviceResponse.Content.ReadAsAsync<PaymentProcessorGetPaymentStatusResponse>();;
+            return new GetPaymentStatusResponse(paymentProcessorResponse.PaymentId, paymentProcessorResponse.PaymentStatus);
         }
 
         [HttpPost("submitSync")]
         public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentSync([FromBody] SubmitPaymentRequest paymentRequest)
         {
-            // save to local -- remember that these contracts don't have to match, they just happen to
-            SubmitPaymentRequest request = paymentRequest;
-            var serviceResponse = await this._httpClient.PostAsJsonAsync($"http://payment-processor", request);
+            PaymentProcessorSubmitPaymentRequest paymentProcessorRequest = new PaymentProcessorSubmitPaymentRequest(paymentRequest.AccountNumber, paymentRequest.PaymentAmount);
+            var serviceResponse = await this._httpClient.PostAsJsonAsync($"http://payment-processor", paymentProcessorRequest);
+            if (!serviceResponse.IsSuccessStatusCode) return new SubmitPaymentResponse(String.Empty, "Error");
 
-            SubmitPaymentResponse response = null;
-            if (serviceResponse.IsSuccessStatusCode)
-            {
-                response = await serviceResponse.Content.ReadAsAsync<SubmitPaymentResponse>();
-            }
-
-            return response;
+            PaymentProcessorSubmitPaymentResponse paymentProcessorResponse = await serviceResponse.Content.ReadAsAsync<PaymentProcessorSubmitPaymentResponse>();
+            return new SubmitPaymentResponse(paymentProcessorResponse.PaymentId, paymentProcessorResponse.PaymentStatus);
         }
 
         [HttpPost("submitAsync")]

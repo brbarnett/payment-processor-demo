@@ -2,13 +2,14 @@ namespace payment_api.Contracts
 {
     public class SubmitPaymentResponse
     {
-        public string AccountNumber { get; set; }
+        public string PaymentId { get; set; }
 
-        public decimal PaymentAmount { get; set; }
+        public string PaymentStatus { get; set; }
 
-        public SubmitPaymentResponse()
+        public SubmitPaymentResponse(string paymentId, string paymentStatus)
         {
-            
+            this.PaymentId = paymentId;
+            this.PaymentStatus = paymentStatus;
         }
     }
 }
