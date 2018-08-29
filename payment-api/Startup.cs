@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 
 namespace payment_api
 {
@@ -27,8 +28,13 @@ namespace payment_api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+            
+            // HttpClient
             services.AddSingleton(new HttpClient());
+
+            // RabbitMQ connection. Connections are thread safe, models are not
+            var factory = new ConnectionFactory();
+            services.AddSingleton(factory.CreateConnection());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
