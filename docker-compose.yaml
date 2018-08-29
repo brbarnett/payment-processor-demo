@@ -2,3 +2,47 @@ version: '3.7'
 
 services:
 
+  external-payment-gateway:
+    build:
+      context: .
+      dockerfile: ./external-payment-gateway/Dockerfile
+    container_name: external-payment-gateway
+    image: external-payment-gateway:latest
+    ports:
+    - "3000:80"
+
+  payment-api:
+    build:
+      context: .
+      dockerfile: ./payment-api/Dockerfile
+    container_name: payment-api
+    image: payment-api:latest
+    ports:
+    - "3001:80"
+
+  payment-processor:
+    build:
+      context: .
+      dockerfile: ./payment-processor/Dockerfile
+    container_name: payment-processor
+    image: payment-processor:latest
+    ports:
+    - "3002:80"
+
+  payment-processor-db:
+    image: redis:latest
+    ports:
+    - "6379:6379"
+
+  message-broker:
+    container_name: message-broker
+    hostname: message-broker
+    image: rabbitmq:3.7.7-management
+    ports:
+    - "15672:15672"
+    - "5672:5672"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
