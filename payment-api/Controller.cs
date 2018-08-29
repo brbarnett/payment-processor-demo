@@ -48,7 +48,7 @@ namespace payment_api
         }
 
         [HttpPost("submitAsync")]
-        public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentAsync([FromBody] SubmitPaymentRequest paymentRequest)
+        public ActionResult<SubmitPaymentResponse> CreatePaymentAsync([FromBody] SubmitPaymentRequest paymentRequest)
         {
             PaymentProcessorSubmitPaymentRequest paymentProcessorRequest = new PaymentProcessorSubmitPaymentRequest(paymentRequest.AccountNumber, paymentRequest.PaymentAmount);
 
