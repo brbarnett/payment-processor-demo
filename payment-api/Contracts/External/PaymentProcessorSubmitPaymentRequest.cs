@@ -1,4 +1,4 @@
-namespace payment_api.Contracts
+namespace payment_api.Contracts.External
 {
     public class PaymentProcessorSubmitPaymentRequest
     {
