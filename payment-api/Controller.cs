@@ -35,13 +35,13 @@ namespace payment_api
         }
 
         [HttpPost("submitSync")]
-        public void CreatePaymentSync([FromBody] string payment)
+        public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentSync([FromBody] SubmitPaymentRequest payment)
         {
             throw new NotImplementedException();
         }
 
         [HttpPost("submitAsync")]
-        public void CreatePaymentAsync([FromBody] string payment)
+        public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentAsync([FromBody] SubmitPaymentRequest payment)
         {
             throw new NotImplementedException();
         }
