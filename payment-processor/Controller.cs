@@ -42,7 +42,7 @@ namespace payment_processor
         [HttpPost("")]
         public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentSync([FromBody] SubmitPaymentRequest paymentRequest)
         {
-            Payment payment = new Payment(paymentRequest.AccountNumber, paymentRequest.PaymentAmount);
+            Payment payment = new Payment(paymentRequest.PaymentId, paymentRequest.AccountNumber, paymentRequest.PaymentAmount);
 
             // save payment to cache
             var cache = this._cacheConnection.GetDatabase();

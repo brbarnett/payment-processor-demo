@@ -1,5 +1,3 @@
-using System;
-
 namespace payment_processor.Models
 {
     public class Payment
@@ -14,9 +12,9 @@ namespace payment_processor.Models
 
         public Payment() { }
 
-        public Payment(string accountNumber, decimal amount)
+        public Payment(string paymentId, string accountNumber, decimal amount)
         {
-            this.Id = Guid.NewGuid().ToString();
+            this.Id = paymentId;
             this.AccountNumber = accountNumber;
             this.Amount = amount;
             this.Status = "Pending";
