@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using payment_api.Contracts;
 using payment_api.Contracts.External;
-using RabbitMQ.Client;
 
 namespace payment_api
 {
@@ -17,12 +16,10 @@ namespace payment_api
     [ApiController]
     public class Controller : ControllerBase
     {
-        private readonly IConnection _brokerConnection;
         private readonly HttpClient _httpClient;
 
-        public Controller(IConnection brokerConnection, HttpClient httpClient)
+        public Controller(HttpClient httpClient)
         {
-            this._brokerConnection = brokerConnection;
             this._httpClient = httpClient;
         }
 
@@ -48,22 +45,16 @@ namespace payment_api
         }
 
         [HttpPost("submitAsync")]
-        public ActionResult<SubmitPaymentResponse> CreatePaymentAsync([FromBody] SubmitPaymentRequest paymentRequest)
+        public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentAsync([FromBody] SubmitPaymentRequest paymentRequest)
         {
             PaymentProcessorSubmitPaymentRequest paymentProcessorRequest = new PaymentProcessorSubmitPaymentRequest(paymentRequest.AccountNumber, paymentRequest.PaymentAmount);
 
-            // enqueue request as message
-            using (var channel = this._brokerConnection.CreateModel())
-            {
-                string paymentsExchange = "payments";
-                channel.ExchangeDeclare(exchange: paymentsExchange, type: "topic");
+            var request = new HttpRequestMessage(HttpMethod.Post, "http://amqp-sidecar");
+            request.Headers.Add("amqp-exchange", "payments");
+            request.Headers.Add("amqp-exchange-type", "topic");
+            request.Headers.Add("amqp-routing-key", "payments.create");
 
-                var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(paymentProcessorRequest));
-                channel.BasicPublish(exchange: paymentsExchange,
-                                     routingKey: "payments.create",
-                                     basicProperties: null,
-                                     body: body);
-            }
+            var serviceResponse = await this._httpClient.SendAsync(request);
 
             return new SubmitPaymentResponse(paymentProcessorRequest.PaymentId, "Pending");
         }
