@@ -8,7 +8,7 @@ namespace payment_api.Contracts
 
         public SubmitPaymentResponse()
         {
-
+            
         }
     }
 }
