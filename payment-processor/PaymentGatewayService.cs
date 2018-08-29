@@ -19,6 +19,8 @@ namespace payment_processor
         private readonly IConnectionMultiplexer _cacheConnection;
         private readonly HttpClient _httpClient;
 
+        private static string ExternalPaymentGatewayUri = Environment.GetEnvironmentVariable("EXTERNAL_PAYMENT_GATEWAY_URI");
+
         public PaymentGatewayService(IConnectionMultiplexer cacheConnection, HttpClient httpClient)
         {
             this._cacheConnection = cacheConnection;
@@ -35,7 +37,7 @@ namespace payment_processor
 
             // synchronously wait for external payment gateway
             PaymentGatewaySubmitPaymentRequest gatewayRequest = new PaymentGatewaySubmitPaymentRequest(payment.Id, payment.AccountNumber, payment.Amount);
-            var serviceResponse = await this._httpClient.PostAsJsonAsync($"http://external-payment-gateway", gatewayRequest);
+            var serviceResponse = await this._httpClient.PostAsJsonAsync(ExternalPaymentGatewayUri, gatewayRequest);
             if (!serviceResponse.IsSuccessStatusCode) throw new Exception("Error processing payment");
 
             PaymentGatewaySubmitPaymentResponse gatewayResponse = await serviceResponse.Content.ReadAsAsync<PaymentGatewaySubmitPaymentResponse>(); ;

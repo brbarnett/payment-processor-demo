@@ -18,6 +18,9 @@ namespace payment_api
     {
         private readonly HttpClient _httpClient;
 
+        private static string AmqpSidecarUri = Environment.GetEnvironmentVariable("AMQP_SIDECAR_URI");
+        private static string PaymentProcessorUri = Environment.GetEnvironmentVariable("PAYMENT_PROCESSOR_URI");
+
         public Controller(HttpClient httpClient)
         {
             this._httpClient = httpClient;
@@ -26,7 +29,7 @@ namespace payment_api
         [HttpGet("{paymentId}")]
         public async Task<ActionResult<GetPaymentStatusResponse>> GetPaymentStatus(string paymentId)
         {
-            var serviceResponse = await this._httpClient.GetAsync($"http://payment-processor/{paymentId}");
+            var serviceResponse = await this._httpClient.GetAsync($"{PaymentProcessorUri}/{paymentId}");
             if (!serviceResponse.IsSuccessStatusCode) return new GetPaymentStatusResponse(String.Empty, "Not found");
 
             PaymentProcessorGetPaymentStatusResponse paymentProcessorResponse = await serviceResponse.Content.ReadAsAsync<PaymentProcessorGetPaymentStatusResponse>(); ;
@@ -38,7 +41,7 @@ namespace payment_api
         {
             PaymentProcessorSubmitPaymentRequest paymentProcessorRequest = new PaymentProcessorSubmitPaymentRequest(paymentRequest.AccountNumber, paymentRequest.PaymentAmount);
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://payment-processor");
+            var request = new HttpRequestMessage(HttpMethod.Post, PpaymentProcessorUri);
             var serviceResponse = await this._httpClient.SendAsync(request);
 
             if (!serviceResponse.IsSuccessStatusCode) return new SubmitPaymentResponse(String.Empty, "Error");
@@ -52,7 +55,7 @@ namespace payment_api
         {
             PaymentProcessorSubmitPaymentRequest paymentProcessorRequest = new PaymentProcessorSubmitPaymentRequest(paymentRequest.AccountNumber, paymentRequest.PaymentAmount);
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://amqp-sidecar");
+            var request = new HttpRequestMessage(HttpMethod.Post, AmqpSidecarUri);
             request.Headers.Add("amqp-exchange", "payments");
             request.Headers.Add("amqp-routing-key", "payments.create");
             var serviceResponse = await this._httpClient.SendAsync(request);
