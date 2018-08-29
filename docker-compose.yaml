@@ -28,6 +28,8 @@ services:
     image: payment-processor:latest
     ports:
     - "3002:80"
+    environment:
+    - REDIS_CONNECTION=payment-processor-db:6379
 
   payment-processor-db:
     image: redis:latest
