@@ -51,9 +51,7 @@ namespace payment_api
 
             var request = new HttpRequestMessage(HttpMethod.Post, "http://amqp-sidecar");
             request.Headers.Add("amqp-exchange", "payments");
-            request.Headers.Add("amqp-exchange-type", "topic");
             request.Headers.Add("amqp-routing-key", "payments.create");
-
             var serviceResponse = await this._httpClient.SendAsync(request);
 
             return new SubmitPaymentResponse(paymentProcessorRequest.PaymentId, "Pending");
