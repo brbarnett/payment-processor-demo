@@ -4,14 +4,11 @@ namespace payment_processor.Contracts
     {
         public string PaymentId { get; set; }
 
-        public decimal PaymentAmount { get; set; }
-
         public string PaymentStatus { get; set; }
 
-        public GetPaymentStatusResponse(string paymentId, decimal paymentAmount, string paymentStatus)
+        public GetPaymentStatusResponse(string paymentId, string paymentStatus)
         {
             this.PaymentId = paymentId;
-            this.PaymentAmount = paymentAmount;
             this.PaymentStatus = paymentStatus;
         }
     }

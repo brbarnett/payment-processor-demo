@@ -32,11 +32,11 @@ namespace payment_processor
             var cache = this._cacheConnection.GetDatabase();
             RedisValue cachedValue = await cache.StringGetAsync(paymentId);
 
-            if (cachedValue.IsNullOrEmpty) return new GetPaymentStatusResponse(paymentId, 0, "Not found");
+            if (cachedValue.IsNullOrEmpty) return new GetPaymentStatusResponse(paymentId, "Not found");
 
             var payment = JsonConvert.DeserializeObject<Payment>(cachedValue);
 
-            return new GetPaymentStatusResponse(payment.Id, payment.Amount, payment.Status);
+            return new GetPaymentStatusResponse(payment.Id, payment.Status);
         }
 
         [HttpPost("")]
