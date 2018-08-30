@@ -52,9 +52,6 @@ services:
     - message-broker
     environment:
       REDIS_CONNECTION: payment-processor-db:6379
-      RABBITMQ_HOSTNAME: message-broker
-      RABBITMQ_USERNAME: rabbitmq
-      RABBITMQ_PASSWORD: rabbitmq
       EXTERNAL_PAYMENT_GATEWAY_URI: http://external-payment-gateway
 
   payment-processor-amqp-sidecar:
