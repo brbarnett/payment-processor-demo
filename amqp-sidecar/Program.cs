@@ -46,6 +46,9 @@ namespace amqp_sidecar
                 }.AsEnumerable()
             };
 
+            // don't start the consumer if there are no rules
+            if (!config.Rules.Any()) return;
+
             var httpClient = new HttpClient();
             var factory = new ConnectionFactory
             {
