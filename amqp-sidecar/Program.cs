@@ -81,11 +81,21 @@ namespace amqp_sidecar
 
                     Task.Run(async () =>
                     {
-                        var request = new HttpRequestMessage(HttpMethod.Post, rule.EndpointUri);
-                        request.Content = new ObjectContent<object>(message, new JsonMediaTypeFormatter());
-                        var response = await httpClient.SendAsync(request);
+                        try
+                        {
+                            var request = new HttpRequestMessage(HttpMethod.Post, rule.EndpointUri);
+                            // use StringContent because object has already been serialized, 
+                            // but still use application/json for Content-Type (StringContent uses text/plain by default)
+                            request.Content = new StringContent(message, Encoding.UTF8, "application/json");
+                            Console.WriteLine($"Sending request: {request}");
+                            var response = await httpClient.SendAsync(request);
 
-                        Console.WriteLine($"Posted message to {rule.EndpointUri}. Response: {response}");
+                            Console.WriteLine($"Posted message to {rule.EndpointUri}. Response: {response}");
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine($"Exception thrown: {e}");
+                        }
                     });
                 };
 

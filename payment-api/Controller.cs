@@ -44,6 +44,7 @@ namespace payment_api
 
             var request = new HttpRequestMessage(HttpMethod.Post, PaymentProcessorUri);
             request.Content = new ObjectContent<PaymentProcessorSubmitPaymentRequest>(paymentProcessorRequest, new JsonMediaTypeFormatter());
+            Console.WriteLine($"Sending request: {request}");
             var serviceResponse = await this._httpClient.SendAsync(request);
 
             if (!serviceResponse.IsSuccessStatusCode) return new SubmitPaymentResponse(String.Empty, "Error");
