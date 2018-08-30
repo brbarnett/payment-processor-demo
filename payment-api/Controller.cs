@@ -44,11 +44,14 @@ namespace payment_api
 
             var request = new HttpRequestMessage(HttpMethod.Post, PaymentProcessorUri);
             request.Content = new ObjectContent<PaymentProcessorSubmitPaymentRequest>(paymentProcessorRequest, new JsonMediaTypeFormatter());
-            Console.WriteLine($"Sending request: {request}");
             var serviceResponse = await this._httpClient.SendAsync(request);
 
-            if (!serviceResponse.IsSuccessStatusCode) return new SubmitPaymentResponse(String.Empty, "Error");
+            if (!serviceResponse.IsSuccessStatusCode) {
+                Console.WriteLine($"Error in request: {serviceResponse}");
+                return new SubmitPaymentResponse(String.Empty, "Error");
+            }
 
+            // because this call is synchronous, we can return the actual values from the finished process
             PaymentProcessorSubmitPaymentResponse paymentProcessorResponse = await serviceResponse.Content.ReadAsAsync<PaymentProcessorSubmitPaymentResponse>();
             return new SubmitPaymentResponse(paymentProcessorResponse.PaymentId, paymentProcessorResponse.PaymentStatus);
         }
@@ -59,8 +62,6 @@ namespace payment_api
             PaymentProcessorSubmitPaymentRequest paymentProcessorRequest = new PaymentProcessorSubmitPaymentRequest(paymentRequest.AccountNumber, paymentRequest.PaymentAmount);
 
             var request = new HttpRequestMessage(HttpMethod.Post, AmqpSidecarUri);
-            request.Headers.Add("amqp-exchange", "payments");
-            request.Headers.Add("amqp-routing-key", "payments.create");
             request.Content = new ObjectContent<PaymentProcessorSubmitPaymentRequest>(paymentProcessorRequest, new JsonMediaTypeFormatter());
             var serviceResponse = await this._httpClient.SendAsync(request);
 
@@ -69,6 +70,7 @@ namespace payment_api
                 return new SubmitPaymentResponse(String.Empty, "Error");
             }
 
+            // an asynchronous call is marked here as Pending because we don't know the result. downstream services will handle updating
             return new SubmitPaymentResponse(paymentProcessorRequest.PaymentId, "Pending");
         }
     }

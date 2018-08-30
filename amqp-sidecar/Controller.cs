@@ -23,16 +23,13 @@ namespace amqp_sidecar.Controllers
             this._httpClient = httpClient;
         }
 
-        [HttpPost("")]
-        public ActionResult<string> EnqueueMessage([FromBody] object messageBody)
+        [HttpPost("{exchange}/{routingKey}")]
+        public ActionResult<string> EnqueueMessage([FromBody] object messageBody, [FromRoute] string exchange, [FromRoute] string routingKey)
         {
-            Console.WriteLine($"Received message to enqueue: {messageBody}");
+            Console.WriteLine($"Received message to enqueue (exchange={exchange}, routingKey={routingKey}): {messageBody}");
 
-            string exchange = Request.Headers["amqp-exchange"];
-            if(String.IsNullOrEmpty(exchange)) return BadRequest("Could not find required `amqp-exchange` header.");
-
-            string routingKey = Request.Headers["amqp-routing-key"];
-            if(String.IsNullOrEmpty(exchange)) return BadRequest("Could not find required `amqp-routing-key` header.");
+            if (String.IsNullOrEmpty(exchange)) return BadRequest($"Could not find required `{nameof(exchange)}` URI fragment.");
+            if (String.IsNullOrEmpty(routingKey)) return BadRequest($"Could not find required  `{nameof(routingKey)}` URI fragment.");
 
             // enqueue request as message
             using (var channel = this._brokerConnection.CreateModel())

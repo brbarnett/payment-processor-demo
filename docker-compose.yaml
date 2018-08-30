@@ -22,7 +22,7 @@ services:
     depends_on:
     - payment-api-amqp-sidecar
     environment:
-      AMQP_SIDECAR_URI: http://payment-api-amqp-sidecar
+      AMQP_SIDECAR_URI: http://payment-api-amqp-sidecar/payments/payments.create
       PAYMENT_PROCESSOR_URI: http://payment-processor
 
   payment-api-amqp-sidecar:
