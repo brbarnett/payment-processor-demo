@@ -37,8 +37,9 @@ namespace amqp_sidecar_tests
 
             // assert
             var result = actionResult.Result as BadRequestObjectResult;
-            Assert.That(result != null, "Result is not BadRequestObjectResult");
-            Assert.That(result.StatusCode == (int)HttpStatusCode.BadRequest, "Result should be status code 400");
+            Assert.That(result, Is.Not.Null, "Result is not BadRequestObjectResult");
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest), "Result should be status code 400");
+            Assert.That(this._rabbitServer.Exchanges.ContainsKey("payments"), Is.EqualTo(false), "Exchange should not be created");
         }
 
         [Test]
@@ -57,9 +58,10 @@ namespace amqp_sidecar_tests
 
             // assert
             var result = actionResult.Result as OkResult;
-            Assert.That(result != null, "Result is not OkResult");
-            Assert.That(result.StatusCode == (int)HttpStatusCode.OK, "Result should be status code 200");
-            Assert.That(this._rabbitServer.Exchanges["payments"].Messages.Count, Is.EqualTo(1));
+            Assert.That(result, Is.Not.Null, "Result is not OkResult");
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK), "Result should be status code 200");
+            Assert.That(this._rabbitServer.Exchanges.ContainsKey("payments"), Is.EqualTo(true), "Exchange should be created");
+            Assert.That(this._rabbitServer.Exchanges["payments"].Messages.Count, Is.EqualTo(1), "Expected message in exchange");
         }
 
         private class SubmitPaymentRequest
