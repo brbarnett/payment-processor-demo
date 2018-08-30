@@ -22,57 +22,11 @@ namespace payment_processor
     {
         public static void Main(string[] args)
         {
-            RegisterAsBrokerConsumer();
-
             CreateWebHostBuilder(args).Build().Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
-
-        private static void RegisterAsBrokerConsumer()
-        {
-            IPaymentGatewayService paymentGatewayService = new PaymentGatewayService(
-                cacheConnection: ConnectionMultiplexer.Connect(Environment.GetEnvironmentVariable("REDIS_CONNECTION")),
-                httpClient: new HttpClient()
-            );
-
-            var factory = new ConnectionFactory
-            {
-                HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME"),
-                UserName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME"),
-                Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD")
-            };
-            var connection = factory.CreateConnection();
-            var channel = connection.CreateModel();
-
-            string paymentsExchange = "payments";
-            channel.ExchangeDeclare(exchange: paymentsExchange, type: "topic");
-
-            string createQueue = "create";
-            channel.QueueDeclare(queue: createQueue,
-                                 durable: true,
-                                 exclusive: false,
-                                 autoDelete: false);
-            channel.QueueBind(queue: createQueue,
-                              exchange: paymentsExchange,
-                              routingKey: "payments.create");
-
-            var consumer = new EventingBasicConsumer(channel);
-            consumer.Received += (model, ea) =>
-            {
-                var body = ea.Body;
-                var submitPaymentRequest = JsonConvert.DeserializeObject<SubmitPaymentRequest>(Encoding.UTF8.GetString(body));
-
-                paymentGatewayService.Process(submitPaymentRequest);
-            };
-            channel.BasicConsume(queue: createQueue,
-                                 autoAck: true,
-                                 consumer: consumer);
-
-            Console.WriteLine($"Monitoring queue: {createQueue}");
-
-        }
     }
 }
