@@ -28,6 +28,7 @@ namespace amqp_sidecar.Controllers
         {
             Console.WriteLine($"Received message to enqueue (exchange={exchange}, routingKey={routingKey}): {messageBody}");
 
+            if (messageBody == null) return BadRequest($"Unable to parse `{nameof(messageBody)}` from content");
             if (String.IsNullOrEmpty(exchange)) return BadRequest($"Could not find required `{nameof(exchange)}` URI fragment.");
             if (String.IsNullOrEmpty(routingKey)) return BadRequest($"Could not find required  `{nameof(routingKey)}` URI fragment.");
 
