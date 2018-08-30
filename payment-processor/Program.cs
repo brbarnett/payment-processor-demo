@@ -12,8 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using payment_processor.Contracts;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using StackExchange.Redis;
 
 namespace payment_processor
