@@ -57,6 +57,21 @@ services:
       RABBITMQ_PASSWORD: rabbitmq
       EXTERNAL_PAYMENT_GATEWAY_URI: http://external-payment-gateway
 
+  payment-processor-amqp-sidecar:
+    build:
+      context: .
+      dockerfile: ./amqp-sidecar/Dockerfile
+    container_name: payment-processor-amqp-sidecar
+    image: amqp-sidecar:latest
+    ports:
+    - "3004:80"
+    depends_on:
+    - message-broker
+    environment:
+      RABBITMQ_HOSTNAME: message-broker
+      RABBITMQ_USERNAME: rabbitmq
+      RABBITMQ_PASSWORD: rabbitmq
+
   payment-processor-db:
     container_name: payment-processor-db
     image: redis:latest
