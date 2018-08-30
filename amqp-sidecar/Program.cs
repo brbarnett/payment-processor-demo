@@ -33,18 +33,28 @@ namespace amqp_sidecar
         private static void ConfigureBrokerMessageHandler()
         {
             // mock config until I figure out dynamic configs
-            BrokerConfig config = new BrokerConfig
+            BrokerConfig config = new BrokerConfig();
+
+            const string brokerConfigFilePath = "config/broker.json";
+            if (!File.Exists("config/broker.json"))
             {
-                Rules = new List<Rule>{
-                    new Rule
-                    {
-                        Exchange = "payments",
-                        Queue = "create",
-                        RoutingKeys = new [] {"payments.create"},
-                        EndpointUri = "http://payment-processor"
-                        }
-                }.AsEnumerable()
-            };
+                Console.WriteLine($"Broker config does not exist at path {brokerConfigFilePath}");
+                return;
+            }
+
+            Console.WriteLine("Found config/broker.config");
+
+            // read in broker.json as config
+            try
+            {
+                string configFileContents = File.ReadAllText(brokerConfigFilePath);
+                config = JsonConvert.DeserializeObject<BrokerConfig>(configFileContents);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Unable to read configuration file: {e}");
+                return;
+            }
 
             // don't start the consumer if there are no rules
             if (!config.Rules.Any()) return;
