@@ -42,19 +42,44 @@ namespace amqp_sidecar_tests
             Assert.That(this._rabbitServer.Exchanges.ContainsKey("payments"), Is.EqualTo(false), "Exchange should not be created");
         }
 
-        [Test]
-        public void PublishMessageValid()
+        [Test, Sequential]
+        public void PublishMessageBodyWithNullParmaters(
+            [Values("", "payments", "")] string exchange,
+            [Values("", "", "payments.create")] string routingKey)
         {
             // arrange
             var controller = new amqp_sidecar.Controllers.Controller(this._connectionfactory.CreateConnection(), new HttpClient());
-            var message = new SubmitPaymentRequest
+            var messageBody = new SubmitPaymentRequest
             {
                 AccountNumber = "12345",
                 PaymentAmount = 100
             };
 
             // act
-            ActionResult<string> actionResult = controller.EnqueueMessage(message, "payments", "payments.create");
+            ActionResult<string> actionResult = controller.EnqueueMessage(messageBody, exchange, routingKey);
+
+            // assert
+            var result = actionResult.Result as BadRequestObjectResult;
+            Assert.That(result, Is.Not.Null, "Result is not BadRequestObjectResult");
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest), "Result should be status code 400");
+            Assert.That(this._rabbitServer.Exchanges.ContainsKey("payments"), Is.EqualTo(false), "Exchange should not be created");
+        }
+
+        [Test]
+        public void PublishMessageValid( 
+            [Values("payments")] string exchange,
+            [Values("payments.create")] string routingKey)
+        {
+            // arrange
+            var controller = new amqp_sidecar.Controllers.Controller(this._connectionfactory.CreateConnection(), new HttpClient());
+            var messageBody = new SubmitPaymentRequest
+            {
+                AccountNumber = "12345",
+                PaymentAmount = 100
+            };
+
+            // act
+            ActionResult<string> actionResult = controller.EnqueueMessage(messageBody, exchange, routingKey);
 
             // assert
             var result = actionResult.Result as OkResult;
