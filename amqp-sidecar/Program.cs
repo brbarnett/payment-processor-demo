@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Text;
 using System.Threading.Tasks;
 using amqp_sidecar.Models;
@@ -76,8 +77,16 @@ namespace amqp_sidecar
                 {
                     var body = ea.Body;
                     var message = Encoding.UTF8.GetString(body);
+                    Console.WriteLine($"Received message: {message}");
 
-                    httpClient.PostAsJsonAsync(rule.EndpointUri, message);
+                    Task.Run(async () =>
+                    {
+                        var request = new HttpRequestMessage(HttpMethod.Post, rule.EndpointUri);
+                        request.Content = new ObjectContent<object>(message, new JsonMediaTypeFormatter());
+                        var response = await httpClient.SendAsync(request);
+
+                        Console.WriteLine($"Posted message to {rule.EndpointUri}. Response: {response}");
+                    });
                 };
 
                 channel.BasicConsume(queue: rule.Queue,

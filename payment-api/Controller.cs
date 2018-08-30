@@ -63,7 +63,10 @@ namespace payment_api
             request.Content = new ObjectContent<PaymentProcessorSubmitPaymentRequest>(paymentProcessorRequest, new JsonMediaTypeFormatter());
             var serviceResponse = await this._httpClient.SendAsync(request);
 
-            if (!serviceResponse.IsSuccessStatusCode) return new SubmitPaymentResponse(String.Empty, "Error");
+            if (!serviceResponse.IsSuccessStatusCode) {
+                Console.WriteLine($"Error in request: {serviceResponse}");
+                return new SubmitPaymentResponse(String.Empty, "Error");
+            }
 
             return new SubmitPaymentResponse(paymentProcessorRequest.PaymentId, "Pending");
         }

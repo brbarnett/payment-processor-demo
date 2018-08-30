@@ -26,6 +26,8 @@ namespace amqp_sidecar.Controllers
         [HttpPost("")]
         public ActionResult<string> EnqueueMessage([FromBody] object messageBody)
         {
+            Console.WriteLine($"Received message to enqueue: {messageBody}");
+
             string exchange = Request.Headers["amqp-exchange"];
             if(String.IsNullOrEmpty(exchange)) return BadRequest("Could not find required `amqp-exchange` header.");
 

@@ -16,13 +16,15 @@ namespace payment_processor
     [ApiController]
     public class Controller : ControllerBase
     {
-        private IConnectionMultiplexer _cacheConnection;
-        private readonly IPaymentGatewayService _paymentGatewayService;
+        private readonly IConnectionMultiplexer _cacheConnection;
+        private readonly HttpClient _httpClient;
 
-        public Controller(IConnectionMultiplexer cacheConnection, IPaymentGatewayService paymentGatewayService)
+        private static string ExternalPaymentGatewayUri = Environment.GetEnvironmentVariable("EXTERNAL_PAYMENT_GATEWAY_URI");
+
+        public Controller(IConnectionMultiplexer cacheConnection, HttpClient HttpClient)
         {
             this._cacheConnection = cacheConnection;
-            this._paymentGatewayService = paymentGatewayService;
+            this._httpClient = HttpClient;
         }
 
         [HttpGet("{paymentId}")]
@@ -42,7 +44,24 @@ namespace payment_processor
         [HttpPost("")]
         public async Task<ActionResult<SubmitPaymentResponse>> CreatePaymentSync([FromBody] SubmitPaymentRequest paymentRequest)
         {
-            Payment payment = await this._paymentGatewayService.Process(paymentRequest);
+            Console.WriteLine($"Recieved message: {paymentRequest}");
+
+            Payment payment = new Payment(paymentRequest.PaymentId, paymentRequest.AccountNumber, paymentRequest.PaymentAmount);
+
+            // save payment to cache
+            var cache = this._cacheConnection.GetDatabase();
+            await cache.StringSetAsync($"payment.{payment.Id}", JsonConvert.SerializeObject(payment));
+
+            // synchronously wait for external payment gateway
+            PaymentGatewaySubmitPaymentRequest gatewayRequest = new PaymentGatewaySubmitPaymentRequest(payment.Id, payment.AccountNumber, payment.Amount);
+            var serviceResponse = await this._httpClient.PostAsJsonAsync(ExternalPaymentGatewayUri, gatewayRequest);
+            if (!serviceResponse.IsSuccessStatusCode) throw new Exception("Error processing payment");
+
+            PaymentGatewaySubmitPaymentResponse gatewayResponse = await serviceResponse.Content.ReadAsAsync<PaymentGatewaySubmitPaymentResponse>(); ;
+
+            // update payment in cache
+            payment.Status = gatewayResponse.PaymentStatus;
+            await cache.StringSetAsync($"payment.{payment.Id}", JsonConvert.SerializeObject(payment));
             
             return new SubmitPaymentResponse(payment.Id, payment.Status);
         }
