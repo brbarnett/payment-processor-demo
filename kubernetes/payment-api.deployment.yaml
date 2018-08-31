@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: payment-api
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: payment-api
+    spec:
+      containers:
+      - image: brbarnett/payment-api:latest
+        name: payment-api
+      - image: brbarnett/amqp-sidecar:latest
+        # ports
