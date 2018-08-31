@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: payment-processor-demo-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+    - hosts:
+      - rp-aks-centralus-payment-processor-demo-ingress.centralus.cloudapp.azure.com
+      secretName: rp-aks-centralus-payment-processor-demo-ingress-tls
+  rules:
+  - host: rp-aks-centralus-payment-processor-demo-ingress.centralus.cloudapp.azure.com
+    http:
+      paths:
+      - path: /payments
+        backend:
+          serviceName: payment-api
+          servicePort: 80
