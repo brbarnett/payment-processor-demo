@@ -12,5 +12,15 @@ spec:
       containers:
       - image: brbarnett/payment-api:latest
         name: payment-api
+        environment:
+        - AMQP_SIDECAR_URI: http://payment-api-amqp-sidecar/payments/payments.create
+        - PAYMENT_PROCESSOR_URI: http://payment-processor
       - image: brbarnett/amqp-sidecar:latest
-        # ports
+        name: amqp-sidecar
+        ports:
+        - port: 8080
+          targetPort: 80
+        environment:
+        - RABBITMQ_HOSTNAME: message-broker
+        - RABBITMQ_USERNAME: rabbitmq
+        - RABBITMQ_PASSWORD: rabbitmq
