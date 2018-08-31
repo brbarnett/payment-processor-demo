@@ -26,11 +26,8 @@ services:
       PAYMENT_PROCESSOR_URI: http://payment-processor
 
   payment-api-amqp-sidecar:
-    build:
-      context: .
-      dockerfile: ./amqp-sidecar/Dockerfile
     container_name: payment-api-amqp-sidecar
-    image: amqp-sidecar:latest
+    image: brbarnett/amqp-sidecar:latest
     ports:
     - "3003:80"
     depends_on:
@@ -55,11 +52,8 @@ services:
       EXTERNAL_PAYMENT_GATEWAY_URI: http://external-payment-gateway
 
   payment-processor-amqp-sidecar:
-    build:
-      context: .
-      dockerfile: ./amqp-sidecar/Dockerfile
     container_name: payment-processor-amqp-sidecar
-    image: amqp-sidecar:latest
+    image: brbarnett/amqp-sidecar:latest
     ports:
     - "3004:80"
     depends_on:
