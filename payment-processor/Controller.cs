@@ -30,6 +30,8 @@ namespace payment_processor
         [HttpGet("{paymentId}")]
         public async Task<ActionResult<GetPaymentStatusResponse>> GetPaymentStatus(string paymentId)
         {
+            Console.WriteLine($"Received status request for paymentId: {paymentId}")
+            
             // get payment from cache
             var cache = this._cacheConnection.GetDatabase();
             RedisValue cachedValue = await cache.StringGetAsync($"payment.{paymentId}");
