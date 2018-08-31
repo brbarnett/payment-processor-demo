@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: external-payment-gateway
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: external-payment-gateway
+    spec:
+      containers:
+      - image: brbarnett/external-payment-gateway:latest
+        name: external-payment-gateway
