@@ -13,8 +13,8 @@ spec:
       - image: brbarnett/payment-processor:latest
         name: payment-processor
         environment:
-        - AMQP_SIDECAR_URI: http://payment-api-amqp-sidecar/payments/payments.create
-        - PAYMENT_PROCESSOR_URI: http://payment-processor
+        - REDIS_CONNECTION: payment-processor-db:6379
+        - EXTERNAL_PAYMENT_GATEWAY_URI: http://external-payment-gateway
       - image: brbarnett/amqp-sidecar:latest
         name: amqp-sidecar
         ports:
