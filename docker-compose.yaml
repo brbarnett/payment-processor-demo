@@ -63,7 +63,7 @@ services:
       RABBITMQ_USERNAME: rabbitmq
       RABBITMQ_PASSWORD: rabbitmq
     volumes:
-    - ./amqp-sidecar/config:/config
+    - ./amqp-sidecar/config:/app/config
 
   payment-processor-db:
     container_name: payment-processor-db
