@@ -52,3 +52,5 @@ Here is a diagram of how messages flow with the AMQP Sidecar:
 ![Sidecar message flow](images/sidecar-message-flow.jpg "Sidecar message flow")
 
 The Payment API and Payment Processor apps can continue to rely on the HTTP protocol, but still achieve the benefits of a decoupled and resilient architecture.
+
+The sidecar source can be found at [https://github.com/brbarnett/amqp-sidecar](https://github.com/brbarnett/amqp-sidecar)
