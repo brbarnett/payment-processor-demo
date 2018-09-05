@@ -20,7 +20,7 @@ az aks create \
     --no-wait
 
 kubectl create namespace payment-processor-demo
-kubectl apply -f ./setup/helm-service-account.yaml
+kubectl apply -f ./kubernetes/setup/helm-service-account.yaml
 helm init --service-account tiller
 
 az network public-ip create \
@@ -33,7 +33,7 @@ az network public-ip create \
 helm install stable/nginx-ingress \
     --name nginx-ingress \
     --namespace payment-processor-demo \
-    --set controller.service.loadBalancerIP=104.43.215.139 \
+    --set controller.service.loadBalancerIP=23.99.176.141 \
     --set controller.scope.enabled=true \
     --set controller.scope.namespace="payment-processor-demo" \
     --set controller.replicaCount=3
@@ -41,12 +41,12 @@ helm install stable/nginx-ingress \
 helm install stable/cert-manager \
     --name cert-manager \
     --namespace kube-system \
-    --set ingressShim.defaultIssuerName=letsencrypt-prod `
+    --set ingressShim.defaultIssuerName=letsencrypt-prod \
     --set ingressShim.defaultIssuerKind=Issuer
 
-kubectl apply -f .\setup\cert-issuer-prod.yaml -n payment-processor-demo
+kubectl apply -f ./kubernetes/setup/cert-issuer-prod.yaml -n payment-processor-demo
 
-kubectl apply -f . -n payment-processor-demo
+kubectl apply -f ./kubernetes -n payment-processor-demo
 kubectl get services -n payment-processor-demo
 kubectl get deployments -n payment-processor-demo
 kubectl get pods -n payment-processor-demo
