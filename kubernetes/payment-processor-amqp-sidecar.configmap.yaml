@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payment-processor-amqp-sidecar-config
+data:
+  broker.json: |
+    {
+        "rules": [
+            {
+                "exchange": "payments",
+                "queue": "create",
+                "routingKeys": [
+                    "payments.create"
+                ],
+                "endpointUri": "http://payment-processor"
+            }
+        ]
+    }
