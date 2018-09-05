@@ -54,3 +54,13 @@ Here is a diagram of how messages flow with the AMQP Sidecar:
 The Payment API and Payment Processor apps can continue to rely on the HTTP protocol, but still achieve the benefits of a decoupled and resilient architecture.
 
 The sidecar source can be found at [https://github.com/brbarnett/amqp-sidecar](https://github.com/brbarnett/amqp-sidecar)
+
+## Preparing the solution for Kubernetes
+Push all images to Docker Hub
+```
+docker-compose build
+
+docker push brbarnett/external-payment-gateway
+docker push brbarnett/payment-api
+docker push brbarnett/payment-processor
+```

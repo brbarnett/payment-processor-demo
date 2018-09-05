@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: ./external-payment-gateway/Dockerfile
     container_name: external-payment-gateway
-    image: external-payment-gateway:latest
+    image: brbarnett/external-payment-gateway:latest
     ports:
     - "3000:80"
 
@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: ./payment-api/Dockerfile
     container_name: payment-api
-    image: payment-api:latest
+    image: brbarnett/payment-api:latest
     ports:
     - "3001:80"
     depends_on:
@@ -42,7 +42,7 @@ services:
       context: .
       dockerfile: ./payment-processor/Dockerfile
     container_name: payment-processor
-    image: payment-processor:latest
+    image: brbarnett/payment-processor:latest
     ports:
     - "3002:80"
     depends_on:

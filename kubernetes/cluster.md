@@ -7,7 +7,7 @@ This assumes you are familiar with and have installed Helm.
 ## Configuration
 ```
 kubectl create namespace payment-processor-demo
-kubectl apply -f .\setup\helm-service-account.yaml
+kubectl apply -f ./setup/helm-service-account.yaml
 helm init --service-account tiller
 
 az network public-ip create \
@@ -19,8 +19,8 @@ az network public-ip create \
 
 helm install stable/nginx-ingress \
     --name nginx-ingress \
-    --namespace api-ingress \
-    --set controller.service.loadBalancerIP=ip.address.created.above \
+    --namespace payment-processor-demo \
+    --set controller.service.loadBalancerIP=104.43.215.139 \
     --set controller.scope.enabled=true \
     --set controller.scope.namespace="payment-processor-demo" \
     --set controller.replicaCount=3
