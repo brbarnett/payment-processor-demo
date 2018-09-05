@@ -25,10 +25,10 @@ helm init --service-account tiller
 
 az network public-ip create \
     -g MC_kubernetes_rp-aks-centralus_centralus \
-    -n rp-aks-centralus-payment-processor-demo-ingress-ip \
+    -n rp-aks-centralus-ppdi-ip \
     -l centralus \
     --allocation-method static \
-    --dns-name rp-aks-centralus-payment-processor-demo-ingress
+    --dns-name rp-aks-centralus-ppdi
 
 helm install stable/nginx-ingress \
     --name nginx-ingress \
