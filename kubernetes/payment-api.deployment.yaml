@@ -19,13 +19,13 @@ spec:
           value: http://payment-api-amqp-sidecar/payments/payments.create
         - name: PAYMENT_PROCESSOR_URI
           value: http://payment-processor
-      - image: brbarnett/amqp-sidecar:latest
+      - image: brbarnett/amqp-sidecar@sha256:363b798c22d6e6a8ffcceffaac6a15061fff62e11be0c11ec703ee34dc343fb1
         name: amqp-sidecar
         ports:
         - containerPort: 8000
         env:
         - name: RABBITMQ_HOSTNAME
-          value: message-broker
+          value: message-broker-rabbitmq
         - name: RABBITMQ_USERNAME
           value: rabbitmq
         - name: RABBITMQ_PASSWORD

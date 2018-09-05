@@ -16,16 +16,16 @@ spec:
         - containerPort: 80
         env:
         - name: REDIS_CONNECTION
-          value: payment-processor-db:6379
+          value: payment-processor-db-redis-master:6379
         - name: EXTERNAL_PAYMENT_GATEWAY_URI
           value: http://external-payment-gateway
-      - image: brbarnett/amqp-sidecar:latest
+      - image: brbarnett/amqp-sidecar@sha256:363b798c22d6e6a8ffcceffaac6a15061fff62e11be0c11ec703ee34dc343fb1
         name: amqp-sidecar
         ports:
         - containerPort: 8000
         env:
         - name: RABBITMQ_HOSTNAME
-          value: message-broker
+          value: message-broker-rabbitmq
         - name: RABBITMQ_USERNAME
           value: rabbitmq
         - name: RABBITMQ_PASSWORD
