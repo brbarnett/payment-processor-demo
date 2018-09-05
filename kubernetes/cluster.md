@@ -6,6 +6,20 @@ This assumes you are familiar with and have installed Helm.
 
 ## Configuration
 ```
+az aks create \
+    -g Kubernetes \
+    -n rp-aks-centralus \
+    -l centralus \
+    -c 3 \
+    -s Standard_DS1_v2 \
+    --aad-server-app-id 00000000-0000-0000-0000-000000000000 \
+    --aad-server-app-secret xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx= \
+    --aad-client-app-id 00000000-0000-0000-0000-000000000000 \
+    --aad-tenant-id 00000000-0000-0000-0000-000000000000 \
+    --enable-rbac \
+    --kubernetes-version 1.11.2 \
+    --no-wait
+
 kubectl create namespace payment-processor-demo
 kubectl apply -f ./setup/helm-service-account.yaml
 helm init --service-account tiller
