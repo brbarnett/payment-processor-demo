@@ -16,7 +16,7 @@ spec:
         - containerPort: 80
         env:
         - name: AMQP_SIDECAR_URI
-          value: http://payment-api-amqp-sidecar/payments/payments.create
+          value: http://payment-api-amqp-sidecar:8000/payments/payments.create
         - name: PAYMENT_PROCESSOR_URI
           value: http://payment-processor
       - image: brbarnett/amqp-sidecar@sha256:363b798c22d6e6a8ffcceffaac6a15061fff62e11be0c11ec703ee34dc343fb1
