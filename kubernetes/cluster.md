@@ -46,7 +46,20 @@ helm install stable/cert-manager \
 
 kubectl apply -f ./kubernetes/setup/cert-issuer-prod.yaml -n payment-processor-demo
 
+helm install stable/rabbitmq \
+    --name message-broker \
+    --namespace payment-processor-demo \
+    --set rabbitmq.username=rabbitmq \
+    --set rabbitmq.password=rabbitmq \
+    --set rabbitmq.erlangCookie=SWQOKODSQALRPCLNMEQG
+
+helm install stable/redis \
+    --name payment-processor-db \
+    --namespace payment-processor-demo \
+    --set usePassword=false
+
 kubectl apply -f ./kubernetes -n payment-processor-demo
+
 kubectl get services -n payment-processor-demo
 kubectl get deployments -n payment-processor-demo
 kubectl get pods -n payment-processor-demo
