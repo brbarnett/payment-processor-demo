@@ -16,7 +16,6 @@ az aks create \
     --aad-server-app-secret xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx= \
     --aad-client-app-id 00000000-0000-0000-0000-000000000000 \
     --aad-tenant-id 00000000-0000-0000-0000-000000000000 \
-    --enable-rbac \
     --kubernetes-version 1.11.2 \
     --no-wait
 
