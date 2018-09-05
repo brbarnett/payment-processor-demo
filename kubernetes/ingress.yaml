@@ -8,11 +8,11 @@ metadata:
     kubernetes.io/tls-acme: "true"
 spec:
   tls:
-    - hosts:
-      - rp-aks-centralus-payment-processor-demo-ingress.centralus.cloudapp.azure.com
-      secretName: rp-aks-centralus-payment-processor-demo-ingress-tls
+  - hosts:
+    - rp-aks-centralus-ppdi.centralus.cloudapp.azure.com
+    secretName: rp-aks-centralus-ppdi-tls
   rules:
-  - host: rp-aks-centralus-payment-processor-demo-ingress.centralus.cloudapp.azure.com
+  - host: rp-aks-centralus-ppdi.centralus.cloudapp.azure.com
     http:
       paths:
       - path: /payments
