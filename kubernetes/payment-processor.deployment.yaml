@@ -30,3 +30,10 @@ spec:
           value: rabbitmq
         - name: RABBITMQ_PASSWORD
           value: rabbitmq
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config
+      volumes:
+      - name: config-volume
+        configMap:
+          name: payment-processor-amqp-sidecar-config
