@@ -36,7 +36,7 @@ helm install install/kubernetes/helm/istio \
     --namespace istio-system \
     --set global.mtls.enabled=true \
     --set grafana.enabled=true \
-    --set grafana.persist=true \
+    --set grafana.persist=false \
     --set servicegraph.enabled=true \
     --set tracing.enabled=true \
     --set kiali.enabled=true
