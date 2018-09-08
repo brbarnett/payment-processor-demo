@@ -1,0 +1,7 @@
+replicas: 3
+persistence:
+  enabled: true
+rabbitmq:
+  username: rabbitmq
+  password: rabbitmq
+  erlangCookie: SWQOKODSQALRPCLNMEQG

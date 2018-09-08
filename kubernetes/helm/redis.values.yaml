@@ -1,0 +1,5 @@
+usePassword: false
+cluster:
+  slaveCount: 3
+rbac:
+  create: true
