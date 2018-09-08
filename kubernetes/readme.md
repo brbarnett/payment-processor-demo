@@ -30,6 +30,17 @@ az network public-ip create \
     --allocation-method static \
     --dns-name rp-aks-centralus-ppdi
 
+# Clone https://github.com/istio/istio and checkout tag 1.0.2. Run this from the cloned Istio directory
+helm install install/kubernetes/helm/istio \
+    --name istio \
+    --namespace istio-system \
+    --set global.mtls.enabled=true \
+    --set grafana.enabled=true \
+    --set grafana.persist=true \
+    --set servicegraph.enabled=true \
+    --set tracing.enabled=true \
+    --set kiali.enabled=true
+
 helm install stable/nginx-ingress \
     --name nginx-ingress \
     --namespace payment-processor-demo \
@@ -49,6 +60,8 @@ kubectl apply -f ./kubernetes/setup/cert-issuer-prod.yaml -n payment-processor-d
 helm install stable/rabbitmq \
     --name message-broker \
     --namespace payment-processor-demo \
+    --set replicas=3 \
+    --set persistence.enabled=true \
     --set rabbitmq.username=rabbitmq \
     --set rabbitmq.password=rabbitmq \
     --set rabbitmq.erlangCookie=SWQOKODSQALRPCLNMEQG
@@ -56,7 +69,9 @@ helm install stable/rabbitmq \
 helm install stable/redis \
     --name payment-processor-db \
     --namespace payment-processor-demo \
-    --set usePassword=false
+    --set usePassword=false \
+    --set cluster.slaveCount=3 \
+    --set rbac.create=true
 
 kubectl apply -f ./kubernetes -n payment-processor-demo
 
