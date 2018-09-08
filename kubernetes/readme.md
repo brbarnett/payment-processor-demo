@@ -56,16 +56,18 @@ helm install stable/cert-manager \
     --set ingressShim.defaultIssuerKind=Issuer
 
 kubectl apply -f ./kubernetes/setup/cert-issuer-prod.yaml -n payment-processor-demo
-helm upgrade message-broker stable/rabbitmq -f ./kubernetes/helm/rabbitmq.values.yaml
+
 helm install stable/rabbitmq \
     --name message-broker \
     --namespace payment-processor-demo \
     -f ./kubernetes/helm/rabbitmq.values.yaml
+# helm upgrade message-broker stable/rabbitmq -f ./kubernetes/helm/rabbitmq.values.yaml
 
 helm install stable/redis \
     --name payment-processor-db \
     --namespace payment-processor-demo \
     -f ./kubernetes/helm/redis.values.yaml
+# helm upgrade payment-processor-db stable/redis -f ./kubernetes/helm/redis.values.yaml
 
 kubectl apply -f ./kubernetes -n payment-processor-demo
 
