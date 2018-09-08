@@ -2,6 +2,8 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: external-payment-gateway
+  annotations:
+        sidecar.istio.io/inject: "true"
 spec:
   replicas: 3
   template:

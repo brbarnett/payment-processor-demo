@@ -8,6 +8,8 @@ spec:
     metadata:
       labels:
         app: payment-processor
+      annotations:
+        sidecar.istio.io/inject: "true"
     spec:
       containers:
       - image: brbarnett/payment-processor:latest
