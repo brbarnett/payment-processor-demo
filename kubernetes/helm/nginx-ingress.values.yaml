@@ -1,0 +1,7 @@
+controller:
+  service:
+    loadBalancerIP: 23.99.176.141
+  scope:
+    enabled: true
+    namespace: payment-processor-demo
+  replicaCount: 3

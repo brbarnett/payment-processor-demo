@@ -44,10 +44,8 @@ helm install install/kubernetes/helm/istio \
 helm install stable/nginx-ingress \
     --name nginx-ingress \
     --namespace payment-processor-demo \
-    --set controller.service.loadBalancerIP=23.99.176.141 \
-    --set controller.scope.enabled=true \
-    --set controller.scope.namespace="payment-processor-demo" \
-    --set controller.replicaCount=3
+    -f ./kubernetes/helm/nginx-ingress.values.yaml
+# helm upgrade nginx-ingress stable/nginx-ingress -f ./kubernetes/helm/nginx-ingress.values.yaml
 
 helm install stable/cert-manager \
     --name cert-manager \
